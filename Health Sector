@@ -1,0 +1,36 @@
+1. Retrieve the count of patients who visited a specific hospital in the last month.
+SELECT COUNT(*) AS patient_count
+FROM visits
+WHERE hospital_id = 1
+  AND visit_date >= DATEADD(MONTH, -1, GETDATE());
+
+2. List all patients who have not booked an appointment in the past year.
+SELECT patient_id, name
+FROM patients
+WHERE patient_id NOT IN (
+  SELECT DISTINCT patient_id
+  FROM appointments
+  WHERE appointment_date >= DATEADD(YEAR, -1, GETDATE())
+);
+
+3. Find the average length of stay for patients admitted to a hospital.
+SELECT hospital_id, AVG(DATEDIFF(day, admission_date, discharge_date)) AS avg_length_of_stay
+FROM admissions
+GROUP BY hospital_id;
+
+4. Identify duplicate patient records in the database.
+SELECT first_name, last_name, date_of_birth, COUNT(*)
+FROM patients
+GROUP BY first_name, last_name, date_of_birth
+HAVING COUNT(*) > 1;
+
+5.Retrieve the total number of appointments by department.
+SELECT department_id, COUNT(*) AS total_appointments
+FROM appointments
+GROUP BY department_id;
+
+
+
+
+
+
