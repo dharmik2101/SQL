@@ -29,6 +29,119 @@ SELECT department_id, COUNT(*) AS total_appointments
 FROM appointments
 GROUP BY department_id;
 
+6. Find the doctors who have treated more than 100 unique patients.
+SELECT doctor_id, COUNT(DISTINCT patient_id) AS unique_patients
+FROM treatments
+GROUP BY doctor_id
+HAVING COUNT(DISTINCT patient_id) > 100;
+
+7. Write a query to detect gaps in bed occupancy for a specific hospital.
+WITH cte AS (
+  SELECT bed_id, discharge_date, 
+         LEAD(admission_date) OVER (PARTITION BY bed_id ORDER BY discharge_date) AS next_admission_date
+  FROM admissions
+  WHERE hospital_id = 'hospital_id_here'
+)
+SELECT bed_id, discharge_date, next_admission_date
+FROM cte
+WHERE next_admission_date > discharge_date;
+
+8. Retrieve the top 3 most prescribed medications in the last year.
+SELECT medication_id, COUNT(*) AS prescriptions_count
+FROM prescriptions
+WHERE prescription_date >= DATEADD(YEAR, -1, GETDATE())
+GROUP BY medication_id
+ORDER BY prescriptions_count DESC
+LIMIT 3;
+
+9. Find patients with multiple diagnoses for the same condition.
+SELECT patient_id, condition_id, COUNT(*) AS diagnosis_count
+FROM diagnoses
+GROUP BY patient_id, condition_id
+HAVING COUNT(*) > 1;
+
+10. Calculate the readmission rate of patients within 30 days of discharge.
+WITH readmissions AS (
+  SELECT a.patient_id, a.discharge_date, b.admission_date
+  FROM admissions a
+  JOIN admissions b ON a.patient_id = b.patient_id
+  WHERE DATEDIFF(day, a.discharge_date, b.admission_date) <= 30
+    AND a.discharge_date < b.admission_date
+)
+SELECT COUNT(DISTINCT patient_id) * 100.0 / (SELECT COUNT(*) FROM admissions) AS readmission_rate
+FROM readmissions;
+
+11. Find the percentage of appointments that were canceled.
+SELECT ROUND(
+  (SELECT COUNT(*) FROM appointments WHERE status = 'Canceled') * 100.0 / COUNT(*), 2
+) AS cancellation_rate
+FROM appointments;
+
+12. Identify high-risk patients based on their medical history (e.g., more than 3 hospital admissions in the past year).
+SELECT patient_id, COUNT(*) AS admission_count
+FROM admissions
+WHERE admission_date >= DATEADD(YEAR, -1, GETDATE())
+GROUP BY patient_id
+HAVING COUNT(*) > 3;
+
+13.Retrieve the hospital with the highest patient satisfaction score.
+SELECT hospital_id, AVG(satisfaction_score) AS avg_score
+FROM feedback
+GROUP BY hospital_id
+ORDER BY avg_score DESC
+LIMIT 1;
+
+14. List patients who have not received any medication after being diagnosed with a condition.
+SELECT d.patient_id, d.condition_id
+FROM diagnoses d
+LEFT JOIN prescriptions p ON d.patient_id = p.patient_id AND d.condition_id = p.condition_id
+WHERE p.prescription_id IS NULL;
+
+15. Calculate the average cost per treatment type.
+SELECT treatment_type, AVG(cost) AS avg_cost
+FROM treatments
+GROUP BY treatment_type;
+
+16. Detect overlapping shifts for doctors in a hospital.
+SELECT d1.doctor_id, d1.shift_start, d1.shift_end, d2.shift_start AS overlap_start, d2.shift_end AS overlap_end
+FROM doctor_shifts d1
+JOIN doctor_shifts d2 ON d1.doctor_id = d2.doctor_id
+  AND d1.shift_start < d2.shift_end
+  AND d1.shift_end > d2.shift_start
+  AND d1.shift_id <> d2.shift_id;
+
+17. Find the total cost of treatments per patient, excluding unpaid bills.
+SELECT patient_id, SUM(cost) AS total_paid_treatment_cost
+FROM treatments
+WHERE payment_status = 'Paid'
+GROUP BY patient_id;
+
+18. Identify trends in patient visits by month over the past year.
+SELECT MONTH(visit_date) AS visit_month, COUNT(*) AS visit_count
+FROM visits
+WHERE visit_date >= DATEADD(YEAR, -1, GETDATE())
+GROUP BY MONTH(visit_date)
+ORDER BY visit_month;
+
+19. Calculate the average waiting time for appointments per department.
+SELECT department_id, AVG(DATEDIFF(MINUTE, appointment_scheduled_time, appointment_start_time)) AS avg_waiting_time
+FROM appointments
+WHERE appointment_start_time IS NOT NULL
+GROUP BY department_id;
+
+20. Find the ratio of inpatient to outpatient visits for each hospital.
+SELECT hospital_id,
+       SUM(CASE WHEN visit_type = 'Inpatient' THEN 1 ELSE 0 END) AS inpatient_visits,
+       SUM(CASE WHEN visit_type = 'Outpatient' THEN 1 ELSE 0 END) AS outpatient_visits,
+       ROUND(SUM(CASE WHEN visit_type = 'Inpatient' THEN 1 ELSE 0 END) * 1.0 /
+             SUM(CASE WHEN visit_type = 'Outpatient' THEN 1 ELSE 0 END), 2) AS inpatient_outpatient_ratio
+FROM visits
+GROUP BY hospital_id;
+
+
+
+
+
 
 
 
