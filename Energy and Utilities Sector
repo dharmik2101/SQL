@@ -1,0 +1,116 @@
+1. Retrieve Energy Consumption for a Specific Customer
+SELECT customer_id, reading_date, energy_consumption
+FROM energy_usage
+WHERE customer_id = 'C001'
+ORDER BY reading_date DESC;
+
+2. Calculate Total Energy Consumption for Each Region
+SELECT region, SUM(energy_consumption) AS total_energy
+FROM energy_usage
+GROUP BY region
+ORDER BY total_energy DESC;
+
+3.Identify High-Consumption Customers
+SELECT customer_id, SUM(energy_consumption) AS total_consumption
+FROM energy_usage
+GROUP BY customer_id
+HAVING SUM(energy_consumption) > 1000;
+
+4.Find Smart Meters That Have Not Sent Data in the Last 24 Hours
+SELECT meter_id, last_reading_time
+FROM smart_meters
+WHERE last_reading_time < DATEADD(HOUR, -24, GETDATE());
+
+5.Retrieve Peak Energy Usage Times
+SELECT reading_date, reading_time, MAX(energy_consumption) AS peak_consumption
+FROM energy_usage
+GROUP BY reading_date, reading_time
+ORDER BY peak_consumption DESC
+LIMIT 5;
+
+6.Calculate Average Power Outage Duration by Region
+SELECT region, AVG(DATEDIFF(MINUTE, outage_start_time, outage_end_time)) AS avg_outage_duration
+FROM outages
+GROUP BY region;
+
+7. Detect Overloaded Power Grids
+SELECT grid_id, MAX(load) AS peak_load, capacity
+FROM power_grids
+GROUP BY grid_id, capacity
+HAVING MAX(load) > capacity;
+
+8. Retrieve Billing Details for a Specific Month
+SELECT customer_id, billing_date, total_amount
+FROM bills
+WHERE billing_date BETWEEN '2024-01-01' AND '2024-01-31';
+
+9. Identify Power Lines with Frequent Failures
+SELECT power_line_id, COUNT(*) AS failure_count
+FROM failures
+GROUP BY power_line_id
+HAVING COUNT(*) > 5;
+
+10. Calculate the Efficiency of Each Power Plant
+SELECT plant_id, (SUM(output) / SUM(input)) * 100 AS efficiency_percentage
+FROM power_plants
+GROUP BY plant_id;
+
+11.Retrieve Customers Who Have Never Missed a Payment
+SELECT c.customer_id, c.name
+FROM customers c
+LEFT JOIN payments p ON c.customer_id = p.customer_id
+WHERE p.payment_status = 'On Time';
+
+12.Calculate Renewable Energy Contribution by Plant
+SELECT plant_id, SUM(energy_produced) AS renewable_energy
+FROM energy_production
+WHERE energy_type = 'Renewable'
+GROUP BY plant_id;
+
+13.Identify the Top 5 Most Profitable Customers
+SELECT customer_id, SUM(bill_amount) AS total_revenue
+FROM bills
+GROUP BY customer_id
+ORDER BY total_revenue DESC
+LIMIT 5;
+
+14.Detect Power Outages Affecting More Than 1,000 Customers
+SELECT outage_id, affected_customers, outage_start_time, outage_end_time
+FROM outages
+WHERE affected_customers > 1000;
+
+15. Retrieve Hourly Energy Usage Trends
+SELECT HOUR(reading_time) AS hour_of_day, AVG(energy_consumption) AS avg_consumption
+FROM energy_usage
+GROUP BY HOUR(reading_time)
+ORDER BY hour_of_day;
+
+16. Find Customers Who Have Received Multiple Disconnection Notices
+SELECT customer_id, COUNT(*) AS notice_count
+FROM disconnection_notices
+GROUP BY customer_id
+HAVING COUNT(*) > 1;
+
+17. Calculate Revenue Lost Due to Outages
+SELECT SUM(estimated_loss) AS total_loss
+FROM outages
+WHERE outage_duration > 60; -- Only consider outages lasting more than 1 hour
+
+18.Retrieve Monthly Energy Production by Source
+SELECT energy_type, MONTH(production_date) AS month, SUM(energy_produced) AS total_energy
+FROM energy_production
+GROUP BY energy_type, MONTH(production_date)
+ORDER BY month;
+
+19.Detect Fraudulent Meter Readings
+SELECT meter_id, reading_date, energy_consumption
+FROM energy_usage
+WHERE energy_consumption > (SELECT AVG(energy_consumption) * 3 FROM energy_usage);
+
+20. Calculate Average Billing Amount per Customer
+SELECT customer_id, AVG(bill_amount) AS avg_bill
+FROM bills
+GROUP BY customer_id;
+
+
+
