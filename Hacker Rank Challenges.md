@@ -1,6 +1,6 @@
 # Hacker Rank Challenges Solved
 
-This repository contains SQL solutions to various Hacker Rank challenges, formatted for better readability.
+This repository contains SQL solutions to various Hacker Rank challenges.
 
 ---
 
