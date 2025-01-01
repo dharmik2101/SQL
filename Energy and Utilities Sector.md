@@ -1,6 +1,6 @@
 # Energy Database SQL Queries
 
-This repository contains a collection of SQL queries for various energy management and analysis tasks. Clear formatting, code annotations, and concise descriptions have been added to enhance understanding and usability.
+This repository contains a collection of SQL queries for various energy management and analysis tasks.
 
 ---
 
