@@ -278,6 +278,3 @@ GROUP BY customer_id;
 
 ---
 
-### Notes
-- Each query includes comments to explain its logic.
-- Designed for energy management systems and data analysis purposes.
