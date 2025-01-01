@@ -12,3 +12,12 @@ This repository contains SQL solutions to various Hacker Rank challenges, format
 SELECT DISTINCT CITY
 FROM STATION
 WHERE UPPER(SUBSTR(CITY, 1, 1)) NOT IN ('A', 'E', 'I', 'O', 'U');
+
+## 2. Query City Names Starting and Ending with Vowels
+
+**Description**: Query the list of CITY names from the STATION table that start and end with vowels. The result must not contain duplicates.
+```sql
+SELECT DISTINCT CITY
+FROM STATION
+WHERE UPPER(SUBSTR(CITY, 1, 1)) IN ('A', 'E', 'I', 'O', 'U')
+  AND UPPER(SUBSTR(CITY, -1, 1)) IN ('A', 'E', 'I', 'O', 'U');
