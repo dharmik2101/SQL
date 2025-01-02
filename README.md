@@ -68,4 +68,4 @@ This repository contains a collection of SQL queries categorized by industry sec
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-repo/sql-queries.git
+   git clone https://github.com/dharmik2101/SQL.git
